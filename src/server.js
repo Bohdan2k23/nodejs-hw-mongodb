@@ -1,14 +1,13 @@
 import express from "express";
 import pino from "pino-http";
 import cors from "cors";
-// import { env } from "./utils/env.js";
-// import contactsRouter from "./routers/contacts.js";
 import { configDotenv } from "dotenv";
 import { contactRouter } from "./router/contact.js";
+import { env } from "./utils/env.js";
 
 configDotenv();
 
-const PORT = process.env.PORT || 3000;
+const PORT = env("PORT", 3000);
 
 export function setupServer() {
   const app = express();
