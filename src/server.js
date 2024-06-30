@@ -2,8 +2,10 @@ import express from "express";
 import pino from "pino-http";
 import cors from "cors";
 import { configDotenv } from "dotenv";
-import { contactRouter } from "./router/contact.js";
+import { contactRouter } from "./routers/contacts.js";
 import { env } from "./utils/env.js";
+import { errorHandler } from "./middlewares/errorHandler.js";
+import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 
 configDotenv();
 
@@ -31,9 +33,7 @@ export function setupServer() {
 
   app.use("/contacts", contactRouter);
 
-  app.use("*", (req, res) => {
-    res.status(404).json({ message: "Not found" });
-  });
+  app.use("*", notFoundHandler);
 
   app.use("*", (err, req, res) => {
     res.status(500).json({ message: err.message });
@@ -42,6 +42,8 @@ export function setupServer() {
   app.listen(PORT, () => {
     console.log(`Server is running on port: ${PORT}`);
   });
+
+  app.use(errorHandler);
 
   return app;
 }
