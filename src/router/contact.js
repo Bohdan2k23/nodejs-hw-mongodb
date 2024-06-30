@@ -21,6 +21,7 @@ router.get("/:id", async (req, res) => {
   try {
     const { id } = req.params;
     const data = await getContactById(id);
+    if (!data) throw new Error();
 
     res
       .status(200)
