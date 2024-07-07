@@ -6,11 +6,34 @@ import {
   getContactById,
   updateContact,
 } from "../services/contacts.js";
+import { Contact } from "../db/contacts.js";
+
+const parseSortParams = (sortBy, sortOrder) => {
+  if (!["asc", "desc"].includes(sortOrder)) {
+    sortOrder = "asc";
+  }
+
+  if (![...Object.keys(Contact.schema.obj), "createdAt", "updatedAt"].includes(sortBy)) {
+    sortBy = "_id";
+  }
+
+  return { sortBy, sortOrder };
+};
 
 export const getContactsController = async (req, res, next) => {
-  const data = await getAllContacts();
+  const page = Number(req.query.page) || 1;
+  const perPage = Number(req.query.perPage) || 10;
 
-  if (!data.length) {
+  const { sortBy, sortOrder } = parseSortParams(req.query.sortBy, req.query.sortOrder);
+
+  const data = await getAllContacts({
+    page,
+    perPage,
+    sortBy,
+    sortOrder,
+  });
+
+  if (!data || !data.data.length) {
     next(createHttpError(404, "No one contact"));
     return;
   }
