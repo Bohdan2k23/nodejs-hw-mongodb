@@ -7,7 +7,7 @@ const ContactSchema = new Schema(
       required: true,
     },
     phoneNumber: {
-      type: Number,
+      type: String,
       required: true,
     },
     email: {
@@ -23,14 +23,14 @@ const ContactSchema = new Schema(
       default: "personal",
       enum: ["work", "home", "personal"],
     },
+    userId: {
+      type: Schema.Types.ObjectId,
+      ref: "users",
+      required: true,
+    },
   },
   {
-    createdAt: {
-      timestamps: true,
-    },
-    updatedAt: {
-      timestamps: true,
-    },
+    timestamps: true,
   }
 );
 

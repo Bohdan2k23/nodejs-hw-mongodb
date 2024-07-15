@@ -6,6 +6,8 @@ import { contactRouter } from "./routers/contacts.js";
 import { env } from "./utils/env.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
+import cookieParser from "cookie-parser";
+import { authRouter } from "./routers/auth.js";
 
 configDotenv();
 
@@ -15,13 +17,20 @@ export function setupServer() {
   const app = express();
   app.use(express.json());
   app.use(cors());
-  app.use(
-    pino({
-      transport: {
-        target: "pino-pretty",
-      },
-    })
-  );
+  // app.use(
+  //   pino({
+  //     transport: {
+  //       target: "pino-pretty",
+  //     },
+  //   })
+  // );
+
+  app.use(async (req, res, next) => {
+    console.log(`--> ${req.method} ${req.url}`);
+    return next();
+  });
+
+  app.use(cookieParser());
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Hello World!" });
@@ -32,6 +41,8 @@ export function setupServer() {
   });
 
   app.use("/contacts", contactRouter);
+
+  app.use("/auth", authRouter);
 
   app.use("*", notFoundHandler);
 

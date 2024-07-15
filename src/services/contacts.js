@@ -6,13 +6,14 @@ export const getAllContacts = async ({
   perPage = 10,
   sortOrder = "asc",
   sortBy = "_id",
+  userId = null,
 }) => {
   try {
     const limit = perPage;
     const skip = (page - 1) * perPage;
 
-    const contactsQuery = Contact.find();
-    const contactsCount = await Contact.find().merge(contactsQuery).countDocuments();
+    const contactsQuery = Contact.find({ userId });
+    const contactsCount = await Contact.countDocuments({ userId });
 
     const contacts = await contactsQuery
       .skip(skip)
@@ -27,14 +28,16 @@ export const getAllContacts = async ({
       ...paginationData,
     };
   } catch (error) {
+    console.error(error);
     return null;
   }
 };
 
-export const getContactById = async (id) => {
+export const getContactById = async (_id, userId) => {
   try {
-    return await Contact.findById(id);
+    return await Contact.findOne({ _id, userId });
   } catch (error) {
+    console.error(error);
     return null;
   }
 };
@@ -42,13 +45,14 @@ export const createContact = async (payload) => {
   try {
     return await Contact.create(payload);
   } catch (error) {
+    console.error(error);
     return null;
   }
 };
 
-export const updateContact = async (_id, payload, options = {}) => {
+export const updateContact = async (_id, payload, userId, options = {}) => {
   try {
-    const rawResult = await Contact.findOneAndUpdate({ _id }, payload, {
+    const rawResult = await Contact.findOneAndUpdate({ _id, userId }, payload, {
       new: true,
       includeResultMetadata: true,
       ...options,
@@ -61,14 +65,16 @@ export const updateContact = async (_id, payload, options = {}) => {
       isNew: Boolean(rawResult?.lastErrorObject?.upserted),
     };
   } catch (error) {
+    console.error(error);
     return null;
   }
 };
 
-export const deleteContact = async (_id) => {
+export const deleteContact = async (_id, userId) => {
   try {
-    return await Contact.findOneAndDelete({ _id });
+    return await Contact.findOneAndDelete({ _id, userId });
   } catch (error) {
+    console.error(error);
     return null;
   }
 };
