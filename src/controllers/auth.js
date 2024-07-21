@@ -1,5 +1,11 @@
-import { ONE_DAY } from "../../index.js";
-import { loginUser, logoutUser, refreshUsersSession, registerUser } from "../services/auth.js";
+import { ONE_DAY } from "../constants/index.js";
+import {
+  loginUser,
+  logoutUser,
+  refreshUsersSession,
+  registerUser,
+  sendResetToken,
+} from "../services/auth.js";
 
 export const registerUserController = async (req, res) => {
   const user = await registerUser(req.body);
@@ -65,4 +71,28 @@ export const logoutUserController = async (req, res) => {
   res.clearCookie("refreshToken");
 
   res.status(204).send();
+};
+
+export const sendResetEmailController = async (req, res) => {
+  const resetToken = await sendResetToken(req.body.email);
+
+  res.json({
+    message: "Reset password email was successfully sent!",
+    status: 200,
+    data: {
+      // delete: resetToken,
+    },
+  });
+};
+import { resetPassword } from "../services/auth.js";
+
+/* Інший код файлу */
+
+export const resetPasswordController = async (req, res) => {
+  await resetPassword(req.body);
+  res.json({
+    message: "Password was successfully reset!",
+    status: 200,
+    data: {},
+  });
 };

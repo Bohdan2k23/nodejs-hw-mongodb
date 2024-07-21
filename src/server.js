@@ -1,15 +1,12 @@
 import express from "express";
-import pino from "pino-http";
 import cors from "cors";
-import { configDotenv } from "dotenv";
 import { contactRouter } from "./routers/contacts.js";
 import { env } from "./utils/env.js";
 import { errorHandler } from "./middlewares/errorHandler.js";
 import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 import cookieParser from "cookie-parser";
 import { authRouter } from "./routers/auth.js";
-
-configDotenv();
+import { UPLOAD_DIR } from "./constants/index.js";
 
 const PORT = env("PORT", 3000);
 
@@ -17,6 +14,7 @@ export function setupServer() {
   const app = express();
   app.use(express.json());
   app.use(cors());
+
   // app.use(
   //   pino({
   //     transport: {
@@ -31,6 +29,8 @@ export function setupServer() {
   });
 
   app.use(cookieParser());
+
+  app.use("/uploads", express.static(UPLOAD_DIR));
 
   app.get("/", (req, res) => {
     res.status(200).json({ message: "Hello World!" });

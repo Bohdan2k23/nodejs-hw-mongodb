@@ -7,6 +7,7 @@ import {
   updateContact,
 } from "../services/contacts.js";
 import { Contact } from "../db/contacts.js";
+import { uploadPhoto } from "../utils/uploadPhoto.js";
 
 const parseSortParams = (sortBy, sortOrder) => {
   if (!["asc", "desc"].includes(sortOrder)) {
@@ -57,6 +58,7 @@ export const createContactController = async (req, res) => {
   const contact = await createContact({
     ...req.body,
     userId: req.user._id,
+    photo: await uploadPhoto(req.file),
   });
 
   console.log(contact, req.user._id);
@@ -70,7 +72,15 @@ export const createContactController = async (req, res) => {
 
 export const patchContactController = async (req, res, next) => {
   const { id } = req.params;
-  const result = await updateContact(id, req.body, req.user._id);
+
+  const result = await updateContact(
+    id,
+    {
+      ...req.body,
+      photo: await uploadPhoto(req.file),
+    },
+    req.user._id
+  );
 
   if (!result) {
     next(createHttpError(404, "Contact not found"));

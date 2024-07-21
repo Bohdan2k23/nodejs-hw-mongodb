@@ -10,6 +10,7 @@ import { ctrlWrapper } from "../utils/ctrlWrapper.js";
 import { validateBody } from "../middlewares/validateBody.js";
 import { createContactSchema, updateContactSchema } from "../validations/contacts.js";
 import { authenticate } from "../middlewares/authenticate.js";
+import { upload } from "../middlewares/multer.js";
 
 const router = express.Router();
 
@@ -19,9 +20,19 @@ router.get("/", ctrlWrapper(getContactsController));
 
 router.get("/:id", ctrlWrapper(getContactByIdController));
 
-router.post("/", validateBody(createContactSchema), ctrlWrapper(createContactController));
+router.post(
+  "/",
+  validateBody(createContactSchema),
+  upload.single("photo"),
+  ctrlWrapper(createContactController)
+);
 
-router.patch("/:id", validateBody(updateContactSchema), ctrlWrapper(patchContactController));
+router.patch(
+  "/:id",
+  validateBody(updateContactSchema),
+  upload.single("photo"),
+  ctrlWrapper(patchContactController)
+);
 
 router.delete("/:id", ctrlWrapper(deleteContactController));
 
