@@ -38,7 +38,8 @@
     "multer": "^1.4.5-lts.1",
     "multiparty": "^4.2.3",
     "nodemailer": "^6.9.14",
-    "pino-http": "^10.1.0"
+    "pino-http": "^10.1.0",
+    "swagger-ui-express": "^5.0.1"
   },
   "peerDependencies": {
     "typescript": "^5.0.0"
