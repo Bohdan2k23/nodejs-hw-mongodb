@@ -74,7 +74,7 @@ export const logoutUserController = async (req, res) => {
 };
 
 export const sendResetEmailController = async (req, res) => {
-  const resetToken = await sendResetToken(req.body.email);
+  await sendResetToken(req.body.email);
 
   res.json({
     message: "Reset password email was successfully sent!",
@@ -89,7 +89,7 @@ import { resetPassword } from "../services/auth.js";
 /* Інший код файлу */
 
 export const resetPasswordController = async (req, res) => {
-  await resetPassword(req.body);
+  await resetPassword(req.use);
   res.json({
     message: "Password was successfully reset!",
     status: 200,

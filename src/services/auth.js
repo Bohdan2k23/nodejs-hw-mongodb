@@ -98,11 +98,13 @@ export const sendResetToken = async (email) => {
     }
   );
 
+  const resetLink = `https://${env("APP_DOMAIN")}/reset-password?token=${resetToken}`;
+
   await sendEmail({
     from: env(SMTP.SMTP_FROM),
     to: email,
     subject: "Reset your password",
-    html: `<p>Click <a href="${resetToken}">here</a> to reset your password!</p>`,
+    html: `<p>Click <a href="${resetLink}">here</a> to reset your password!</p>`,
   });
 
   return resetToken;

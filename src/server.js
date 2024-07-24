@@ -7,21 +7,36 @@ import { notFoundHandler } from "./middlewares/notFoundHandler.js";
 import cookieParser from "cookie-parser";
 import { authRouter } from "./routers/auth.js";
 import { UPLOAD_DIR } from "./constants/index.js";
+import multer from "multer";
+
+// const upload = multer();
 
 const PORT = env("PORT", 3000);
 
 export function setupServer() {
   const app = express();
+  // app.use(express.urlencoded({ extended: false }));
   app.use(express.json());
-  app.use(cors());
+  // Middleware for parsing form-data bodies
+  // app.use(upload.any());
 
-  // app.use(
-  //   pino({
-  //     transport: {
-  //       target: "pino-pretty",
-  //     },
-  //   })
-  // );
+  // // Custom middleware to ensure all bodies are in JSON format
+  // app.use((req, res, next) => {
+  //   if (req.is("multipart/form-data")) {
+  //     req.body = req.body || {};
+  //     req.files.forEach((file) => {
+  //       req.body[file.fieldname] = file.buffer;
+  //     });
+  //   }
+  //   next();
+  // });
+
+  app.use((req, res, next) => {
+    console.log(req.body);
+    next();
+  });
+
+  app.use(cors());
 
   app.use(async (req, res, next) => {
     console.log(`--> ${req.method} ${req.url}`);

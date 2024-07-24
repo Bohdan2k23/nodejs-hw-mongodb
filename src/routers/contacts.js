@@ -22,15 +22,15 @@ router.get("/:id", ctrlWrapper(getContactByIdController));
 
 router.post(
   "/",
-  validateBody(createContactSchema),
   upload.single("photo"),
+  validateBody(createContactSchema),
   ctrlWrapper(createContactController)
 );
 
 router.patch(
   "/:id",
-  validateBody(updateContactSchema),
   upload.single("photo"),
+  validateBody(updateContactSchema),
   ctrlWrapper(patchContactController)
 );
 

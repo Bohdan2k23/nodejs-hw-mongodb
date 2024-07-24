@@ -61,8 +61,6 @@ export const createContactController = async (req, res) => {
     photo: await uploadPhoto(req.file),
   });
 
-  console.log(contact, req.user._id);
-
   res.status(201).json({
     status: 201,
     message: `Successfully created a new contact!`,
