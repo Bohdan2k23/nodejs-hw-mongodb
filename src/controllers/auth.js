@@ -89,7 +89,7 @@ import { resetPassword } from "../services/auth.js";
 /* Інший код файлу */
 
 export const resetPasswordController = async (req, res) => {
-  await resetPassword(req.use);
+  await resetPassword(req.body);
   res.json({
     message: "Password was successfully reset!",
     status: 200,
