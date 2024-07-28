@@ -23,7 +23,7 @@ requestBody:
           email:
             type: string
             format: email
-          phone:
+          phoneNumber:
             type: string
           photo:
             type: string

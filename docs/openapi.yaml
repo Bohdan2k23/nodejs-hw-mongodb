@@ -10,7 +10,7 @@ info:
 tags:
   - name: Contacts
     description: Contacts operations
-  - name: Authorization
+  - name: Auth
     description: User authorization
 servers:
   - url: http://localhost:3000

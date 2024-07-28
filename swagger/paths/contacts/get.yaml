@@ -23,7 +23,7 @@ parameters:
     name: sortBy
     schema:
       type: string
-      enum: [name, email, phone]
+      enum: [name, email, phoneNumber]
       default: name
     description: Field to sort by
   - in: query
@@ -34,7 +34,7 @@ parameters:
       default: asc
     description: Sort order (ascending or descending)
 responses:
-  '200':
+  "200":
     description: Successfully retrieved contacts
     content:
       application/json:
@@ -66,7 +66,7 @@ responses:
                   type: boolean
                 hasNextPage:
                   type: boolean
-  '404':
+  "404":
     description: Contacts not found
     content:
       application/json:

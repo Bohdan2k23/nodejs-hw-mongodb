@@ -23,16 +23,14 @@
       "description": "Contacts operations"
     },
     {
-      "name": "Authorization",
+      "name": "Auth",
       "description": "User authorization"
     }
   ],
   "paths": {
     "/contacts": {
       "get": {
-        "tags": [
-          "Contacts"
-        ],
+        "tags": ["Contacts"],
         "summary": "Get all contacts",
         "operationId": "getAllContacts",
         "description": "Retrieve all contacts",
@@ -63,11 +61,7 @@
             "name": "sortBy",
             "schema": {
               "type": "string",
-              "enum": [
-                "name",
-                "email",
-                "phone"
-              ],
+              "enum": ["name", "email", "phoneNumber"],
               "default": "name"
             },
             "description": "Field to sort by"
@@ -77,10 +71,7 @@
             "name": "sortOrder",
             "schema": {
               "type": "string",
-              "enum": [
-                "asc",
-                "desc"
-              ],
+              "enum": ["asc", "desc"],
               "default": "asc"
             },
             "description": "Sort order (ascending or descending)"
@@ -154,9 +145,7 @@
         ]
       },
       "post": {
-        "tags": [
-          "Contacts"
-        ],
+        "tags": ["Contacts"],
         "summary": "Create a new contact",
         "operationId": "createContact",
         "description": "Create a new contact with provided details",
@@ -165,25 +154,38 @@
           "content": {
             "multipart/form-data": {
               "schema": {
+                "required":["name", "phoneNumber"],
                 "type": "object",
                 "properties": {
                   "name": {
                     "type": "string",
-                    "description": "Name of the contact"
+                    "description": "Name of the contact",
+                    "minLength": 3,
+                    "maxLength": 20
                   },
                   "email": {
                     "type": "string",
                     "format": "email",
-                    "description": "Email address of the contact"
+                    "description": "Email address of the contact",
+                    "minLength": 3,
+                    "maxLength": 20
                   },
-                  "phone": {
+                  "phoneNumber": {
                     "type": "string",
-                    "description": "Phone number of the contact"
+                    "description": "Phone number of the contact",
+                    "minLength": 3,
+                    "maxLength": 20
+                  },
+                  "isFavourite": {
+                    "type": "boolean"
+                  },
+                  "contactType": {
+                    "type": "string",
+                    "enum": ["home", "work", "personal"]
                   },
                   "photo": {
                     "type": "string",
-                    "format": "binary",
-                    "description": "Photo of the contact"
+                    "format": "binary"
                   }
                 }
               }
@@ -234,9 +236,7 @@
     },
     "/contacts/{id}": {
       "get": {
-        "tags": [
-          "Contacts"
-        ],
+        "tags": ["Contacts"],
         "summary": "Get a contact by ID",
         "operationId": "getContactById",
         "description": "Retrieve a single contact by its ID",
@@ -268,9 +268,7 @@
         ]
       },
       "patch": {
-        "tags": [
-          "Contacts"
-        ],
+        "tags": ["Contacts"],
         "summary": "Update a contact by ID",
         "operationId": "updateContactById",
         "description": "Update a single contact by its ID",
@@ -294,18 +292,37 @@
                 "type": "object",
                 "properties": {
                   "name": {
-                    "type": "string"
+                    "type": "string",
+                    "optional": true,
+                    "minLength": 3,
+                    "maxLength": 20
                   },
                   "email": {
                     "type": "string",
-                    "format": "email"
+                    "optional": true,
+                    "format": "email",
+                    "minLength": 3,
+                    "maxLength": 20
                   },
-                  "phone": {
-                    "type": "string"
+                  "phoneNumber": {
+                    "type": "string",
+                    "optional": true,
+                    "minLength": 3,
+                    "maxLength": 20
+                  },
+                  "isFavourite": {
+                    "type": "boolean",
+                    "optional": true
+                  },
+                  "contactType": {
+                    "type": "string",
+                    "optional": true,
+                    "enum": ["home", "work", "personal"]
                   },
                   "photo": {
                     "type": "string",
-                    "format": "binary"
+                    "format": "binary",
+                    "optional": true
                   }
                 }
               }
@@ -354,9 +371,7 @@
         ]
       },
       "delete": {
-        "tags": [
-          "Contacts"
-        ],
+        "tags": ["Contacts"],
         "summary": "Delete a contact by ID",
         "operationId": "deleteContactById",
         "description": "Delete a single contact by its ID",
@@ -396,9 +411,7 @@
     },
     "/auth/register": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Register new user",
         "operationId": "createUser",
         "description": "Create a user with payload",
@@ -412,11 +425,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "name",
-                  "email",
-                  "password"
-                ],
+                "required": ["name", "email", "password"],
                 "properties": {
                   "name": {
                     "description": "User's name",
@@ -445,11 +454,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -492,12 +497,15 @@
     },
     "/auth/login": {
       "post": {
-        "tags": [
-          "Authentication"
-        ],
+        "tags": ["Auth"],
         "summary": "Login to the application",
         "operationId": "loginUser",
         "description": "Login to the application with credentials",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
         "requestBody": {
           "required": true,
           "content": {
@@ -562,15 +570,12 @@
               }
             }
           }
-        },
-        "security": []
+        }
       }
     },
     "/auth/logout": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Logout user",
         "operationId": "logoutUser",
         "description": "Logout a user",
@@ -613,9 +618,7 @@
     },
     "/auth/send-reset-email": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Send reset email",
         "operationId": "sendEmail",
         "description": "Send reset password email",
@@ -629,9 +632,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "email"
-                ],
+                "required": ["email"],
                 "properties": {
                   "email": {
                     "description": "User email",
@@ -650,11 +651,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -678,11 +675,9 @@
         }
       }
     },
-    "/auth//reset-pwd": {
+    "/auth/reset-pwd": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Reset password",
         "operationId": "resetPassword",
         "description": "Reset password",
@@ -696,10 +691,7 @@
             "application/json": {
               "schema": {
                 "type": "object",
-                "required": [
-                  "token",
-                  "password"
-                ],
+                "required": ["token", "password"],
                 "properties": {
                   "token": {
                     "description": "User token",
@@ -723,11 +715,7 @@
               "application/json": {
                 "schema": {
                   "type": "object",
-                  "required": [
-                    "status",
-                    "message",
-                    "data"
-                  ],
+                  "required": ["status", "message", "data"],
                   "properties": {
                     "status": {
                       "type": "integer",
@@ -754,11 +742,9 @@
         }
       }
     },
-    "/auth//refresh": {
+    "/auth/refresh": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "summary": "Refresh user session",
         "operationId": "refreshSession",
         "description": "Refreshes the user session",
@@ -841,10 +827,7 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message"
-              ],
+              "required": ["status", "message"],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -865,11 +848,7 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message",
-                "data"
-              ],
+              "required": ["status", "message", "data"],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -881,9 +860,7 @@
                 },
                 "data": {
                   "type": "object",
-                  "required": [
-                    "message"
-                  ],
+                  "required": ["message"],
                   "properties": {
                     "message": {
                       "type": "string",
@@ -902,10 +879,7 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message"
-              ],
+              "required": ["status", "message"],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -922,11 +896,7 @@
       },
       "contacts": {
         "type": "object",
-        "required": [
-          "_id",
-          "name",
-          "email"
-        ],
+        "required": ["_id", "name", "email"],
         "properties": {
           "_id": {
             "description": "Contact's id",
@@ -943,7 +913,7 @@
             "type": "string",
             "example": "user@gmail.com"
           },
-          "phone": {
+          "phoneNumber": {
             "description": "Contact's phone number",
             "type": "string",
             "example": "+380364566545"
@@ -968,11 +938,7 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message",
-                "data"
-              ],
+              "required": ["status", "message", "data"],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -1028,11 +994,7 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message",
-                "data"
-              ],
+              "required": ["status", "message", "data"],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -1044,9 +1006,7 @@
                 },
                 "data": {
                   "type": "object",
-                  "required": [
-                    "message"
-                  ],
+                  "required": ["message"],
                   "properties": {
                     "message": {
                       "type": "string",
@@ -1065,10 +1025,7 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message"
-              ],
+              "required": ["status", "message"],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -1089,11 +1046,7 @@
           "application/json": {
             "schema": {
               "type": "object",
-              "required": [
-                "status",
-                "message",
-                "data"
-              ],
+              "required": ["status", "message", "data"],
               "properties": {
                 "status": {
                   "type": "integer",
@@ -1105,9 +1058,7 @@
                 },
                 "data": {
                   "type": "object",
-                  "required": [
-                    "message"
-                  ],
+                  "required": ["message"],
                   "properties": {
                     "message": {
                       "type": "string",
